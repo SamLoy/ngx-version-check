@@ -1,3 +1,5 @@
+## Forked to introduce a version check on startup
+
 The ngx-version-check service is an injectable Angular 8+ service for monitoring and notifying users of a new application version. The service exposes a boolean property (`NewVersionAvailable`) showing if a new version is available, or can accept a function to call to handle the actual notification. The project was created as another resource for a new framework at work.
 
 To install, use the command:
