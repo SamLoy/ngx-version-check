@@ -26,42 +26,45 @@ export class VersionCheckService {
   private newVersionAvailable: boolean = false
   private versionCheckInterval: Subscription
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   /**
    * Starts the version check interval for the specified frequency.
    * @param config The configuration parameters for the notification function and version check frequency.
    */
   public startVersionChecking(config: IVersionCheck = { notification: null, frequency: 1800000 }) {
-    this.versionCheckInterval = interval(config.frequency).subscribe(() => {
-      this.checkVersion(config.notification)
-    })
+    this.checkVersion(config.notification).then(() => {
+      if (!this.newVersionAvailable) {
+        this.versionCheckInterval = interval(config.frequency).subscribe(() => {
+          this.checkVersion(config.notification)
+        })
+      }
+    });
   }
 
   /** Stops the version check interval. */
   public stopVersionChecking() {
-    this.versionCheckInterval.unsubscribe()
+    if (this.versionCheckInterval) {
+      this.versionCheckInterval.unsubscribe()
+    }
   }
 
   /** Will do the call and check if the hash has changed or not. */
-  private checkVersion(notification: any) {
+  private checkVersion(notification: any): Promise<void> {
     // Timestamp these requests to invalidate caches
-    this.http.get(`version.json?t=${new Date().getTime()}`).subscribe(
-      (response: any) => {
-        this.newVersionAvailable = this.hasHashChanged(this.currentHash, response.hash)
+    return this.http.get(`version.json?t=${new Date().getTime()}`).toPromise().then((response: any) => {
+      this.newVersionAvailable = this.hasHashChanged(this.currentHash, response.hash)
 
-        // Stop checking for a new version if a new version is already available
-        if (this.newVersionAvailable) {
-          this.stopVersionChecking()
+      // Stop checking for a new version if a new version is already available
+      if (this.newVersionAvailable) {
+        this.stopVersionChecking()
 
-          // Call the consuming client's notification method if one exists
-          if (notification) notification()
-        }
-      },
-      err => {
-        console.error(err, 'Error checking version')
+        // Call the consuming client's notification method if one exists
+        if (notification) notification()
       }
-    )
+    }).catch(err => {
+      console.error(err, 'Error checking version')
+    })
   }
 
   /**

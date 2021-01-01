@@ -1,0 +1,99 @@
+import { ɵɵdefineInjectable, ɵɵinject, Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { interval } from 'rxjs';
+
+/**
+ * Author: Henrik Peinar
+ * https://blog.nodeswat.com/automagic-reload-for-clients-after-deploy-with-angular-4-8440c9fdd96c
+ */
+class VersionCheckService {
+    constructor(http) {
+        this.http = http;
+        // These will be replaced by the post-build.js script
+        this.currentHash = '{{POST_BUILD_ENTERS_HASH_HERE}}';
+        this.version = '{{POST_BUILD_ENTERS_VERSION_HERE}}';
+        // Private properties
+        this.newVersionAvailable = false;
+    }
+    /**
+     * Starts the version check interval for the specified frequency.
+     * @param config The configuration parameters for the notification function and version check frequency.
+     */
+    startVersionChecking(config = { notification: null, frequency: 1800000 }) {
+        this.checkVersion(config.notification).then(() => {
+            if (!this.newVersionAvailable) {
+                this.versionCheckInterval = interval(config.frequency).subscribe(() => {
+                    this.checkVersion(config.notification);
+                });
+            }
+        });
+    }
+    /** Stops the version check interval. */
+    stopVersionChecking() {
+        if (this.versionCheckInterval) {
+            this.versionCheckInterval.unsubscribe();
+        }
+    }
+    /** Will do the call and check if the hash has changed or not. */
+    checkVersion(notification) {
+        // Timestamp these requests to invalidate caches
+        return this.http.get(`version.json?t=${new Date().getTime()}`).toPromise().then((response) => {
+            this.newVersionAvailable = this.hasHashChanged(this.currentHash, response.hash);
+            // Stop checking for a new version if a new version is already available
+            if (this.newVersionAvailable) {
+                this.stopVersionChecking();
+                // Call the consuming client's notification method if one exists
+                if (notification)
+                    notification();
+            }
+        }).catch(err => {
+            console.error(err, 'Error checking version');
+        });
+    }
+    /**
+     * Checks if hash has changed.
+     * This file has the JS hash, if it is a different one than in the version.json
+     * we are dealing with version change
+     * @param currentHash The current hash of the application.
+     * @param newHash The new application hash from the version.json file.
+     * @returns Boolean value determining if the hash has changed between the application and version.json file.
+     */
+    hasHashChanged(currentHash, newHash) {
+        if (!currentHash || currentHash === '{{POST_BUILD_ENTERS_HASH_HERE}}') {
+            return false;
+        }
+        return currentHash !== newHash;
+    }
+    /** The current build hash of the application */
+    get Hash() {
+        return this.currentHash;
+    }
+    /** The current version number of the application */
+    get Version() {
+        return this.version;
+    }
+    /** Flag showing if a new version of the application is available. */
+    get NewVersionAvailable() {
+        return this.newVersionAvailable;
+    }
+}
+VersionCheckService.ɵprov = ɵɵdefineInjectable({ factory: function VersionCheckService_Factory() { return new VersionCheckService(ɵɵinject(HttpClient)); }, token: VersionCheckService, providedIn: "root" });
+VersionCheckService.decorators = [
+    { type: Injectable, args: [{
+                providedIn: 'root'
+            },] }
+];
+VersionCheckService.ctorParameters = () => [
+    { type: HttpClient }
+];
+
+/*
+ * Public API Surface of version-check
+ */
+
+/**
+ * Generated bundle index. Do not edit.
+ */
+
+export { VersionCheckService };
+//# sourceMappingURL=ngx-version-check.js.map

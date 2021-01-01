@@ -1,0 +1,5 @@
+/*
+ * Public API Surface of version-check
+ */
+export * from './lib/version-check.service';
+//# sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoicHVibGljLWFwaS5qcyIsInNvdXJjZVJvb3QiOiIiLCJzb3VyY2VzIjpbIi4uLy4uLy4uL3Byb2plY3RzL3ZlcnNpb24tY2hlY2svc3JjL3B1YmxpYy1hcGkudHMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IkFBQUE7O0dBRUc7QUFFSCxjQUFjLDZCQUE2QixDQUFBIiwic291cmNlc0NvbnRlbnQiOlsiLypcclxuICogUHVibGljIEFQSSBTdXJmYWNlIG9mIHZlcnNpb24tY2hlY2tcclxuICovXHJcblxyXG5leHBvcnQgKiBmcm9tICcuL2xpYi92ZXJzaW9uLWNoZWNrLnNlcnZpY2UnXHJcbiJdfQ==

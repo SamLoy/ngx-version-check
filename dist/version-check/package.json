@@ -31,5 +31,13 @@
   },
   "dependencies": {
     "tslib": "^2.0.0"
-  }
+  },
+  "main": "bundles/ngx-version-check.umd.js",
+  "module": "fesm2015/ngx-version-check.js",
+  "es2015": "fesm2015/ngx-version-check.js",
+  "esm2015": "esm2015/ngx-version-check.js",
+  "fesm2015": "fesm2015/ngx-version-check.js",
+  "typings": "ngx-version-check.d.ts",
+  "metadata": "ngx-version-check.metadata.json",
+  "sideEffects": false
 }
