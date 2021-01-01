@@ -1,7 +1,7 @@
 ## This fork is to introduce a version check on startup, then later perform the check on the interval as before.
 
-Sometimes I find the browser renders cached versions of the site's javascript, causing the base installed version to remain as an one.
-Setting the `frequency` variable to 5 seconds certainly solves the problem. However then site is polling far too frequently for "genuine" version updates.
+Sometimes I find the browser renders cached versions of the site's javascript, causing the base installed version to remain as an old one.
+Setting the `frequency` variable to 5 seconds certainly solves the problem. However then the site is polling far too frequently for "genuine" version updates.
 
 For detecting new versions while the site is active, I would like poll for version changes every 10 minutes. However if the browser has launched an old version, this wouldn't be detected for 10 minutes. So this fork introduces an initial version check on startup.
 
