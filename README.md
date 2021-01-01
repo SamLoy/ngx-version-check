@@ -1,3 +1,12 @@
+## This fork is to introduce a version check on startup, then later perform the check on the interval as before.
+
+Sometimes I find the browser renders cached versions of the site's javascript, causing the base installed version to remain as an one.
+Setting the `frequency` variable to 5 seconds certainly solves the problem. However then site is polling far too frequently for "genuine" version updates.
+
+For detecting new versions while the site is active, I would like poll for version changes every 10 minutes. However if the browser has launched an old version, this wouldn't be detected for 10 minutes. So this fork introduces an initial version check on startup.
+
+## ngx-version-check
+
 The ngx-version-check service is an injectable Angular 8+ service for monitoring and notifying users of a new application version. The service exposes a boolean property (`NewVersionAvailable`) showing if a new version is available, or can accept a function to call to handle the actual notification. The project was created as another resource for a new framework at work.
 
 To install, use the command:
